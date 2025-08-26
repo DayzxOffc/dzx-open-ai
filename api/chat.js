@@ -1,8 +1,10 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-require('dotenv').config();
 
-// Inisialisasi GoogleGenerativeAI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// TEMPAT API KEY ANDA
+const MY_API_KEY = "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"; // <--- GANTI DENGAN API KEY ANDA
+
+// Inisialisasi GoogleGenerativeAI dengan API key yang hard-coded
+const genAI = new GoogleGenerativeAI(MY_API_KEY);
 
 // Fungsi handler yang akan diekspor
 module.exports = async (req, res) => {
