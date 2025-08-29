@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - Dayzx Open Ai</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #4cc9f0;
+      --dark: #0a0e27;
+      --darker: #030712;
+      --light: #ffffff;
+      --gray: #6c757d;
+      --light-gray: #f8f9fa;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --danger: #f44336;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--darker);
+      color: var(--light);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation span {
+      position: absolute;
+      display: block;
+      width: 20px;
+      height: 20px;
+      background: rgba(67, 97, 238, 0.1);
+      animation: move 25s linear infinite;
+      bottom: -150px;
+    }
+
+    .bg-animation span:nth-child(1) {
+      left: 25%;
+      width: 80px;
+      height: 80px;
+      animation-delay: 0s;
+    }
+
+    .bg-animation span:nth-child(2) {
+      left: 10%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 2s;
+      animation-duration: 12s;
+    }
+
+    .bg-animation span:nth-child(3) {
+      left: 70%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 4s;
+    }
+
+    .bg-animation span:nth-child(4) {
+      left: 40%;
+      width: 60px;
+      height: 60px;
+      animation-delay: 0s;
+      animation-duration: 18s;
+    }
+
+    .bg-animation span:nth-child(5) {
+      left: 65%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 0s;
+    }
+
+    .bg-animation span:nth-child(6) {
+      left: 75%;
+      width: 110px;
+      height: 110px;
+      animation-delay: 3s;
+    }
+
+    @keyframes move {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+      }
+      100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+      }
+    }
+
+    /* Login Container */
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+      padding: 30px;
+      background: rgba(15, 15, 15, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      z-index: 10;
+      animation: modalFadeIn 0.5s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-header h2 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .login-header p {
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      margin-bottom: 25px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px 0;
+      text-align: center;
+      cursor: pointer;
+      color: var(--gray);
+      font-weight: 500;
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .tab.active {
+      color: var(--accent);
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--gray);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--light);
+      font-size: 16px;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-group input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.2);
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .remember-me input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+
+    .remember-me label {
+      font-size: 14px;
+      color: var(--gray);
+      cursor: pointer;
+    }
+
+    .forgot-password {
+      font-size: 14px;
+      color: var(--accent);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .forgot-password:hover {
+      text-decoration: underline;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .login-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(100%);
+      transition: transform 0.3s;
+    }
+
+    .login-btn:hover::before {
+      transform: translateY(0);
+    }
+
+    .login-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+    }
+
+    .divider {
+      text-align: center;
+      margin: 20px 0;
+      position: relative;
+    }
+
+    .divider::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .divider span {
+      background: rgba(15, 15, 15, 0.95);
+      padding: 0 15px;
+      position: relative;
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .social-login {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .social-btn {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--light);
+      font-size: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .social-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .telegram-btn {
+      border-color: #0088cc;
+      background: rgba(0, 136, 204, 0.1);
+    }
+
+    .telegram-btn:hover {
+      background: rgba(0, 136, 204, 0.2);
+    }
+
+    .github-btn {
+      border-color: #333;
+      background: rgba(51, 51, 51, 0.1);
+    }
+
+    .github-btn:hover {
+      background: rgba(51, 51, 51, 0.2);
+    }
+
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--dark);
+      color: var(--light);
+      padding: 16px 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      transform: translateY(-100px);
+      opacity: 0;
+      transition: var(--transition);
+      max-width: 300px;
+    }
+
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .notification i {
+      font-size: 20px;
+    }
+
+    .notification.success i {
+      color: var(--success);
+    }
+
+    .notification.error i {
+      color: var(--danger);
+    }
+
+    .notification.info i {
+      color: var(--accent);
+    }
+
+    /* Form Content */
+    .form-content {
+      display: none;
+    }
+
+    .form-content.active {
+      display: block;
+    }
+
+    /* Password Requirements */
+    .password-requirements {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    .requirement {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 4px;
+    }
+
+    .requirement i {
+      font-size: 10px;
+    }
+
+    .requirement.valid i {
+      color: var(--success);
+    }
+
+    .requirement.invalid i {
+      color: var(--danger);
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 480px) {
+      .login-container {
+        width: 90%;
+        padding: 20px;
+      }
+
+      .login-header h2 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <div class="login-container">
+    <div class="login-header">
+      <h2>Dayzx Open Ai</h2>
+      <p>Assistant Modern berbasis AI</p>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('login')">Masuk</div>
+      <div class="tab" onclick="switchTab('register')">Daftar</div>
+    </div>
+
+    <div id="login-form" class="form-content active">
+      <div class="form-group">
+        <label for="login-username">Username</label>
+        <input type="text" id="login-username" placeholder="Masukkan username Anda" onkeydown="if(event.key==='Enter') login()">
+      </div>
+
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" placeholder="Masukkan password Anda" onkeydown="if(event.key==='Enter') login()">
+      </div>
+
+      <div class="form-options">
+        <div class="remember-me">
+          <input type="checkbox" id="remember-me">
+          <label for="remember-me">Ingat saya</label>
+        </div>
+        <a href="#" class="forgot-password">Lupa password?</a>
+      </div>
+
+      <button class="login-btn" onclick="login()">Masuk</button>
+
+      <div class="divider">
+        <span>atau masuk dengan</span>
+      </div>
+
+      <div class="social-login">
+        <button class="social-btn telegram-btn" onclick="loginWithTelegram()">
+          <i class="fab fa-telegram"></i> Telegram
+        </button>
+        <button class="social-btn github-btn" onclick="loginWithGithub()">
+          <i class="fab fa-github"></i> GitHub
+        </button>
+      </div>
+    </div>
+
+    <div id="register-form" class="form-content">
+      <div class="form-group">
+        <label for="register-username">Username</label>
+        <input type="text" id="register-username" placeholder="Buat username Anda" onkeyup="checkUsernameAvailability()">
+        <div id="username-feedback" style="font-size: 12px; margin-top: 5px;"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="register-email">Email</label>
+        <input type="email" id="register-email" placeholder="Masukkan email Anda">
+      </div>
+
+      <div class="form-group">
+        <label for="register-password">Password</label>
+        <input type="password" id="register-password" placeholder="Buat password Anda" onkeyup="checkPasswordStrength()">
+        <div class="password-requirements">
+          <div class="requirement" id="length-req">
+            <i class="fas fa-circle"></i>
+            <span>Minimal 8 karakter</span>
+          </div>
+          <div class="requirement" id="uppercase-req">
+            <i class="fas fa-circle"></i>
+            <span>Minimal 1 huruf kapital</span>
+          </div>
+          <div class="requirement" id="number-req">
+            <i class="fas fa-circle"></i>
+            <span>Minimal 1 angka</span>
+          </div>
+          <div class="requirement" id="special-req">
+            <i class="fas fa-circle"></i>
+            <span>Minimal 1 karakter khusus</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirm-password">Konfirmasi Password</label>
+        <input type="password" id="confirm-password" placeholder="Konfirmasi password Anda" onkeyup="checkPasswordMatch()">
+        <div id="password-match" style="font-size: 12px; margin-top: 5px;"></div>
+      </div>
+
+      <button class="login-btn" onclick="register()">Daftar</button>
+    </div>
+  </div>
+
+  <div id="notification" class="notification">
+    <i class="fas fa-info-circle"></i>
+    <span id="notification-text"></span>
+  </div>
+
+  <script>
+    // DOM Elements
+    const notification = document.getElementById('notification');
+    const notificationText = document.getElementById('notification-text');
+
+    // GitHub Configuration - NOTE: keep token safe; it's included here as you provided it
+    const GITHUB_USERNAME = 'DayzxOffc';
+    const GITHUB_REPO = 'user-database';
+    const GITHUB_TOKEN = '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';
+    const GITHUB_FILE = 'users.json';
+
+    // State
+    let users = [];
+    let isRegistering = false;
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Load users from GitHub
+      loadUsersFromGitHub();
+
+      // Check if user is already logged in
+      checkLoginStatus();
+    });
+
+    // Load users from GitHub
+    async function loadUsersFromGitHub() {
+      try {
+        showNotification('Memuat data pengguna...', 'info');
+
+        const url = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/main/${GITHUB_FILE}?t=${Date.now()}`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          // If file doesn't exist, initialize with empty array
+          if (response.status === 404) {
+            users = [];
+            await saveUsersToGitHub();
+            showNotification('Database pengguna dibuat', 'success');
+            return;
+          }
+          throw new Error(`GitHub response: ${response.status}`);
+        }
+
+        users = await response.json();
+        showNotification('Data pengguna berhasil dimuat', 'success');
+      } catch (error) {
+        console.error('Error loading users from GitHub:', error);
+        showNotification('Gagal memuat data pengguna', 'error');
+      }
+    }
+
+    // Save users to GitHub
+    async function saveUsersToGitHub() {
+      try {
+        showNotification('Menyimpan data pengguna...', 'info');
+
+        // Get current file SHA
+        const getFileUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
+        const getFileResponse = await fetch(getFileUrl, {
+          headers: {
+            'Authorization': `token ${GITHUB_TOKEN}`
+          }
+        });
+
+        let sha = null;
+        if (getFileResponse.ok) {
+          const fileData = await getFileResponse.json();
+          sha = fileData.sha;
+        }
+
+        // Update or create file
+        const updateUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
+        const updateResponse = await fetch(updateUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: 'Update users database',
+            content: btoa(unescape(encodeURIComponent(JSON.stringify(users, null, 2)))),
+            sha: sha
+          })
+        });
+
+        if (!updateResponse.ok) {
+          const text = await updateResponse.text();
+          throw new Error(`GitHub update response: ${updateResponse.status} - ${text}`);
+        }
+
+        showNotification('Data pengguna berhasil disimpan', 'success');
+        return true;
+      } catch (error) {
+        console.error('Error saving users to GitHub:', error);
+        showNotification('Gagal menyimpan data pengguna', 'error');
+        return false;
+      }
+    }
+
+    // Tab Switching
+    function switchTab(tab) {
+      const tabs = document.querySelectorAll('.tab');
+      const forms = document.querySelectorAll('.form-content');
+
+      tabs.forEach(t => t.classList.remove('active'));
+      forms.forEach(f => f.classList.remove('active'));
+
+      if (tab === 'login') {
+        tabs[0].classList.add('active');
+        document.getElementById('login-form').classList.add('active');
+        isRegistering = false;
+      } else {
+        tabs[1].classList.add('active');
+        document.getElementById('register-form').classList.add('active');
+        isRegistering = true;
+      }
+    }
+
+    // Check Login Status
+    function checkLoginStatus() {
+      const savedUser = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+      if (savedUser) {
+        // Redirect to main page
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Login Function
+    async function login() {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      const rememberMe = document.getElementById('remember-me').checked;
+
+      if (!username || !password) {
+        showNotification('Username dan password harus diisi', 'error');
+        return;
+      }
+
+      // Find user in users array
+      const user = users.find(u => u.username === username);
+
+      if (!user) {
+        showNotification('Username tidak ditemukan', 'error');
+        return;
+      }
+
+      // Check password
+      if (user.password !== password) {
+        showNotification('Password salah', 'error');
+        return;
+      }
+
+      // Save user session
+      const userSession = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        loginTime: new Date().toISOString()
+      };
+
+      if (rememberMe) {
+        localStorage.setItem('currentUser', JSON.stringify(userSession));
+      } else {
+        sessionStorage.setItem('currentUser', JSON.stringify(userSession));
+      }
+
+      showNotification('Login berhasil, mengalihkan...', 'success');
+
+      // Redirect to main page after a short delay
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1500);
+    }
+
+    // Register Function
+    async function register() {
+      const username = document.getElementById('register-username').value.trim();
+      const email = document.getElementById('register-email').value.trim();
+      const password = document.getElementById('register-password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+
+      // Validation
+      if (!username || !email || !password || !confirmPassword) {
+        showNotification('Semua field harus diisi', 'error');
+        return;
+      }
+
+      // Check if username already exists
+      if (users.some(u => u.username === username)) {
+        showNotification('Username sudah digunakan', 'error');
+        return;
+      }
+
+      // Check if email already exists
+      if (users.some(u => u.email === email)) {
+        showNotification('Email sudah digunakan', 'error');
+        return;
+      }
+
+      // Check password strength
+      if (!isPasswordStrong(password)) {
+        showNotification('Password tidak memenuhi syarat kekuatan', 'error');
+        return;
+      }
+
+      // Check password match
+      if (password !== confirmPassword) {
+        showNotification('Password tidak cocok', 'error');
+        return;
+      }
+
+      // Create new user
+      const newUser = {
+        id: Date.now().toString(),
+        username: username,
+        email: email,
+        password: password, // In a real app, this should be hashed
+        registeredAt: new Date().toISOString()
+      };
+
+      // Add to users array
+      users.push(newUser);
+
+      // Save to GitHub
+      const saved = await saveUsersToGitHub();
+
+      if (saved) {
+        showNotification('Registrasi berhasil, silakan login', 'success');
+
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+          switchTab('login');
+          document.getElementById('login-username').value = username;
+        }, 1500);
+      }
+    }
+
+    // Check Username Availability
+    function checkUsernameAvailability() {
+      const username = document.getElementById('register-username').value.trim();
+      const feedback = document.getElementById('username-feedback');
+
+      if (!username) {
+        feedback.textContent = '';
+        return;
+      }
+
+      if (users.some(u => u.username === username)) {
+        feedback.innerHTML = '<i class="fas fa-times-circle" style="color: var(--danger);"></i> Username sudah digunakan';
+        feedback.style.color = 'var(--danger)';
+      } else if (username.length < 3) {
+        feedback.innerHTML = '<i class="fas fa-info-circle" style="color: var(--warning);"></i> Username minimal 3 karakter';
+        feedback.style.color = 'var(--warning)';
+      } else {
+        feedback.innerHTML = '<i class="fas fa-check-circle" style="color: var(--success);"></i> Username tersedia';
+        feedback.style.color = 'var(--success)';
+      }
+    }
+
+    // Check Password Strength
+    function checkPasswordStrength() {
+      const password = document.getElementById('register-password').value;
+
+      // Length requirement
+      const lengthReq = document.getElementById('length-req');
+      if (password.length >= 8) {
+        lengthReq.classList.add('valid');
+        lengthReq.classList.remove('invalid');
+        lengthReq.querySelector('i').className = 'fas fa-check-circle';
+      } else {
+        lengthReq.classList.add('invalid');
+        lengthReq.classList.remove('valid');
+        lengthReq.querySelector('i').className = 'fas fa-times-circle';
+      }
+
+      // Uppercase requirement
+      const uppercaseReq = document.getElementById('uppercase-req');
+      if (/[A-Z]/.test(password)) {
+        uppercaseReq.classList.add('valid');
+        uppercaseReq.classList.remove('invalid');
+        uppercaseReq.querySelector('i').className = 'fas fa-check-circle';
+      } else {
+        uppercaseReq.classList.add('invalid');
+        uppercaseReq.classList.remove('valid');
+        uppercaseReq.querySelector('i').className = 'fas fa-times-circle';
+      }
+
+      // Number requirement
+      const numberReq = document.getElementById('number-req');
+      if (/[0-9]/.test(password)) {
+        numberReq.classList.add('valid');
+        numberReq.classList.remove('invalid');
+        numberReq.querySelector('i').className = 'fas fa-check-circle';
+      } else {
+        numberReq.classList.add('invalid');
+        numberReq.classList.remove('valid');
+        numberReq.querySelector('i').className = 'fas fa-times-circle';
+      }
+
+      // Special character requirement
+      const specialReq = document.getElementById('special-req');
+      if (/[^A-Za-z0-9]/.test(password)) {
+        specialReq.classList.add('valid');
+        specialReq.classList.remove('invalid');
+        specialReq.querySelector('i').className = 'fas fa-check-circle';
+      } else {
+        specialReq.classList.add('invalid');
+        specialReq.classList.remove('valid');
+        specialReq.querySelector('i').className = 'fas fa-times-circle';
+      }
+    }
+
+    // Check Password Match
+    function checkPasswordMatch() {
+      const password = document.getElementById('register-password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const matchFeedback = document.getElementById('password-match');
+
+      if (!confirmPassword) {
+        matchFeedback.textContent = '';
+        return;
+      }
+
+      if (password === confirmPassword) {
+        matchFeedback.innerHTML = '<i class="fas fa-check-circle" style="color: var(--success);"></i> Password cocok';
+        matchFeedback.style.color = 'var(--success)';
+      } else {
+        matchFeedback.innerHTML = '<i class="fas fa-times-circle" style="color: var(--danger);"></i> Password tidak cocok';
+        matchFeedback.style.color = 'var(--danger)';
+      }
+    }
+
+    // Helper Functions
+    function isPasswordStrong(password) {
+      return (
+        password.length >= 8 &&
+        /[A-Z]/.test(password) &&
+        /[0-9]/.test(password) &&
+        /[^A-Za-z0-9]/.test(password)
+      );
+    }
+
+    // Social Login (Simulated)
+    function loginWithTelegram() {
+      showNotification('Menghubungkan ke Telegram...', 'info');
+
+      // Simulate Telegram login
+      setTimeout(() => {
+        const randomUsername = 'TelegramUser_' + Math.floor(Math.random() * 1000);
+        document.getElementById('login-username').value = randomUsername;
+        document.getElementById('login-password').value = 'telegram123';
+        showNotification('Berhasil terhubung ke Telegram!', 'success');
+
+        // Redirect to main page
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 1000); // 1 detik jeda
+      }, 1500);
+    }
+
+    function loginWithGithub() {
+      showNotification('Menghubungkan ke GitHub...', 'info');
+
+      // Simulate GitHub login
+      setTimeout(() => {
+        const randomUsername = 'GithubUser_' + Math.floor(Math.random() * 1000);
+        document.getElementById('login-username').value = randomUsername;
+        document.getElementById('login-password').value = 'github123';
+        showNotification('Berhasil terhubung ke GitHub!', 'success');
+
+        // Redirect to main page
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 1000); // 1 detik jeda
+      }, 1500);
+    }
+
+    // Notification System
+    function showNotification(message, type = 'info') {
+      notificationText.textContent = message;
+      notification.className = `notification ${type} show`;
+
+      // Update icon based on type
+      const icon = notification.querySelector('i');
+      if (type === 'success') {
+        icon.className = 'fas fa-check-circle';
+      } else if (type === 'error') {
+        icon.className = 'fas fa-exclamation-circle';
+      } else {
+        icon.className = 'fas fa-info-circle';
+      }
+
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
+    // Forgot Password (Simulated)
+    document.querySelector('.forgot-password').addEventListener('click', (e) => {
+      e.preventDefault();
+      showNotification('Fitur reset password akan segera hadir', 'info');
+    });
+  </script>
+</body>
+</html>
