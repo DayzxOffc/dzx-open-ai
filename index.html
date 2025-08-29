@@ -1,0 +1,3128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dayzx Open Ai - Assistant Modern</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #4cc9f0;
+      --dark: #0a0e27;
+      --darker: #030712;
+      --light: #ffffff;
+      --gray: #6c757d;
+      --light-gray: #f8f9fa;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --danger: #f44336;
+      --message-bg: rgba(255, 255, 255, 0.1);
+      --user-bg: linear-gradient(135deg, var(--primary), var(--secondary));
+      --bot-bg: rgba(15, 15, 15, 0.7);
+      --sidebar-bg: rgba(15, 15, 15, 0.95);
+      --transition: all 0.3s ease;
+      --font-size: 16px;
+      --animation-speed: 5ms;
+      --typing-speed: 1;
+    }
+    [data-theme="light"] {
+      --dark: #f8f9fa;
+      --darker: #e9ecef;
+      --light: #212529;
+      --gray: #6c757d;
+      --light-gray: #ffffff;
+      --message-bg: rgba(0, 0, 0, 0.05);
+      --user-bg: linear-gradient(135deg, var(--primary), var(--secondary));
+      --bot-bg: rgba(255, 255, 255, 0.9);
+      --sidebar-bg: rgba(255, 255, 255, 0.95);
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--darker);
+      color: var(--light);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+      transition: var(--transition);
+      font-size: var(--font-size);
+    }
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 100, 100, 0.5);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 100, 100, 0.8);
+    }
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    .bg-animation span {
+      position: absolute;
+      display: block;
+      width: 20px;
+      height: 20px;
+      background: rgba(67, 97, 238, 0.1);
+      animation: move 25s linear infinite;
+      bottom: -150px;
+    }
+    .bg-animation span:nth-child(1) {
+      left: 25%;
+      width: 80px;
+      height: 80px;
+      animation-delay: 0s;
+    }
+    .bg-animation span:nth-child(2) {
+      left: 10%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 2s;
+      animation-duration: 12s;
+    }
+    .bg-animation span:nth-child(3) {
+      left: 70%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 4s;
+    }
+    .bg-animation span:nth-child(4) {
+      left: 40%;
+      width: 60px;
+      height: 60px;
+      animation-delay: 0s;
+      animation-duration: 18s;
+    }
+    .bg-animation span:nth-child(5) {
+      left: 65%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 0s;
+    }
+    .bg-animation span:nth-child(6) {
+      left: 75%;
+      width: 110px;
+      height: 110px;
+      animation-delay: 3s;
+    }
+    @keyframes move {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+      }
+      100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+      }
+    }
+    /* Login Modal */
+    #login-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      backdrop-filter: blur(5px);
+    }
+    #login-box {
+      background: var(--dark);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      animation: modalFadeIn 0.5s ease-out;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    [data-theme="light"] #login-box {
+      background: var(--light-gray);
+      color: var(--dark);
+    }
+    #login-box h2 {
+      margin-bottom: 20px;
+      font-size: 32px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    #login-box p {
+      margin-bottom: 30px;
+      color: var(--gray);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--gray);
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--light);
+      font-size: 16px;
+      outline: none;
+      transition: var(--transition);
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.2);
+    }
+    [data-theme="light"] .form-group input, [data-theme="light"] .form-group select, [data-theme="light"] .form-group textarea {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--dark);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .radio-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .radio-option input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+    .radio-option label {
+      font-size: 14px;
+      color: var(--gray);
+      cursor: pointer;
+    }
+    .login-options {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+    .login-options input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+    .login-options label {
+      font-size: 14px;
+      color: var(--gray);
+      cursor: pointer;
+    }
+    .login-btn {
+      width: 100%;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 50px;
+      background: var(--user-bg);
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .login-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(100%);
+      transition: transform 0.3s;
+    }
+    .login-btn:hover::before {
+      transform: translateY(0);
+    }
+    .login-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+    }
+    .telegram-option {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 20px;
+    }
+    .telegram-option h3 {
+      color: var(--accent);
+      margin-bottom: 10px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .telegram-option p {
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 15px;
+    }
+    .telegram-btn {
+      width: 100%;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #0088cc;
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .telegram-btn:hover {
+      background: #0077b3;
+      transform: translateY(-2px);
+    }
+    /* Sidebar */
+    #sidebar {
+      width: 280px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      overflow-y: auto;
+      z-index: 10;
+    }
+    #sidebar h2 {
+      margin: 0 0 20px;
+      font-size: 20px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #sidebar h2 i {
+      font-size: 18px;
+    }
+    .history-item {
+      padding: 12px 16px;
+      margin: 8px 0;
+      border-radius: 12px;
+      background: var(--message-bg);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid transparent;
+    }
+    .history-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateX(5px);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    .history-item i {
+      color: var(--accent);
+      font-size: 14px;
+    }
+    .history-item .title {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .history-item .date {
+      font-size: 12px;
+      color: var(--gray);
+    }
+    .history-actions {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .history-actions button {
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--light);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: flex-start;
+    }
+    .history-actions button:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+    /* Main */
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    /* Header */
+    #header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(20, 20, 20, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 5;
+    }
+    [data-theme="light"] #header {
+      background: rgba(255, 255, 255, 0.8);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    #header .left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    #header h1 {
+      font-size: 24px;
+      margin: 0;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+    #header .right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    #header button {
+      border: none;
+      background: none;
+      color: var(--light);
+      cursor: pointer;
+      font-size: 18px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    #header button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    #header button:hover::before {
+      width: 100%;
+      height: 100%;
+    }
+    #header button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
+    }
+    #header .new-chat-btn {
+      padding: 10px 16px;
+      background: var(--user-bg);
+      border-radius: 10px;
+      color: white;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    #header .new-chat-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(100%);
+      transition: transform 0.3s;
+    }
+    #header .new-chat-btn:hover::before {
+      transform: translateY(0);
+    }
+    #header .new-chat-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+    }
+    /* User Profile */
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 15px;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--user-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    .user-name {
+      font-size: 14px;
+      font-weight: 500;
+      max-width: 100px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    /* Chat */
+    #chat {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      scroll-behavior: smooth;
+      background-image: radial-gradient(circle at 10% 20%, rgba(67, 97, 238, 0.05) 0%, transparent 20%),
+                        radial-gradient(circle at 90% 80%, rgba(76, 201, 240, 0.05) 0%, transparent 20%);
+    }
+    /* Developer Contact */
+    .developer-contact {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: var(--transition);
+      animation: fadeIn 0.5s ease-out;
+    }
+    .developer-contact:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    .developer-contact h3 {
+      color: var(--accent);
+      margin-bottom: 15px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .developer-contact p {
+      color: var(--gray);
+      margin-bottom: 15px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .telegram-contact {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      background: #0088cc;
+      color: white;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .telegram-contact:hover {
+      background: #0077b3;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 136, 204, 0.4);
+    }
+    .message {
+      max-width: 75%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      margin: 12px 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      position: relative;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      transition: var(--transition);
+      animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .user {
+      align-self: flex-end;
+      background: var(--user-bg);
+      color: white;
+      border-bottom-right-radius: 6px;
+    }
+    .bot {
+      align-self: flex-start;
+      background: var(--bot-bg);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--light);
+      border-bottom-left-radius: 6px;
+    }
+    .message .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+    .message .header i {
+      font-size: 16px;
+    }
+    .message .content {
+      font-size: var(--font-size);
+      line-height: 1.5;
+    }
+    /* Actions (copy + listen + share) */
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+    .actions button {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 8px;
+      color: var(--light);
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      position: relative;
+      overflow: hidden;
+    }
+    .actions button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(0);
+      border-radius: 50%;
+      transition: transform 0.5s;
+    }
+    .actions button:hover::before {
+      transform: scale(2);
+    }
+    .actions button:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+    /* Typing dots */
+    .typing-dots {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 16px 20px;
+    }
+    .typing-dots span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: blink 1.4s infinite both;
+    }
+    .typing-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .typing-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    @keyframes blink {
+      0%, 80%, 100% {
+        opacity: 0.2;
+      }
+      40% {
+        opacity: 1;
+      }
+    }
+    /* Input */
+    #input-area {
+      display: flex;
+      gap: 12px;
+      padding: 16px 24px;
+      background: rgba(20, 20, 20, 0.8);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+    }
+    [data-theme="light"] #input-area {
+      background: rgba(255, 255, 255, 0.8);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    #file {
+      display: none;
+    }
+    .input-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 12px;
+      color: var(--accent);
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .input-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(76, 201, 240, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .input-btn:hover::before {
+      width: 100%;
+      height: 100%;
+    }
+    .input-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+    #input {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: var(--font-size);
+      outline: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--light);
+      backdrop-filter: blur(6px);
+      transition: var(--transition);
+    }
+    #input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    [data-theme="light"] #input {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--dark);
+    }
+    [data-theme="light"] #input::placeholder {
+      color: rgba(0, 0, 0, 0.3);
+    }
+    #send {
+      padding: 0;
+      width: 48px;
+      height: 48px;
+      border: none;
+      border-radius: 12px;
+      background: var(--user-bg);
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #send::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    #send:hover::before {
+      width: 100%;
+      height: 100%;
+    }
+    #send:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+    }
+    /* Stop Button */
+    #stop-btn {
+      padding: 0;
+      width: 48px;
+      height: 48px;
+      border: none;
+      border-radius: 12px;
+      background: var(--danger);
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #stop-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    #stop-btn:hover::before {
+      width: 100%;
+      height: 100%;
+    }
+    #stop-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+    }
+    /* Footer */
+    #footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      background: rgba(20, 20, 20, 0.8);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--gray);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+    }
+    [data-theme="light"] #footer {
+      background: rgba(255, 255, 255, 0.8);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    /* Welcome Modal */
+    #welcome-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      backdrop-filter: blur(5px);
+    }
+    #welcome-box {
+      background: var(--dark);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      animation: modalFadeIn 0.5s ease-out;
+    }
+    [data-theme="light"] #welcome-box {
+      background: var(--light-gray);
+      color: var(--dark);
+    }
+    #welcome-box h2 {
+      margin-bottom: 20px;
+      font-size: 32px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    #welcome-box p {
+      margin-bottom: 20px;
+      color: var(--gray);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+    #welcome-box .developer-info {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: left;
+    }
+    #welcome-box .developer-info h3 {
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #welcome-box .developer-info ul {
+      list-style-type: none;
+      padding-left: 10px;
+    }
+    #welcome-box .developer-info li {
+      margin-bottom: 8px;
+      position: relative;
+      padding-left: 20px;
+    }
+    #welcome-box .developer-info li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--success);
+    }
+    #welcome-box button {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 50px;
+      background: var(--user-bg);
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    #welcome-box button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(100%);
+      transition: transform 0.3s;
+    }
+    #welcome-box button:hover::before {
+      transform: translateY(0);
+    }
+    #welcome-box button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+    }
+    /* Suggested Responses */
+    .suggested-responses {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      animation: fadeIn 0.5s ease-out;
+    }
+    .suggested-response {
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      color: var(--light);
+      font-size: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .suggested-response::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .suggested-response:hover::before {
+      width: 100%;
+      height: 100%;
+    }
+    .suggested-response:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+    /* Theme Toggle */
+    .theme-toggle {
+      position: relative;
+      width: 50px;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 13px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .theme-toggle::before {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+    [data-theme="light"] .theme-toggle::before {
+      transform: translateX(24px);
+    }
+    /* Notifications */
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--dark);
+      color: var(--light);
+      padding: 16px 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: var(--transition);
+      max-width: 300px;
+    }
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .notification i {
+      font-size: 20px;
+    }
+    .notification.success i {
+      color: var(--success);
+    }
+    .notification.error i {
+      color: var(--danger);
+    }
+    .notification.info i {
+      color: var(--accent);
+    }
+    /* Mobile Responsive */
+    .mobile-menu-btn {
+      display: none;
+    }
+    @media (max-width: 768px) {
+      #sidebar {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        bottom: 0;
+        z-index: 20;
+        transition: left 0.3s ease;
+      }
+      #sidebar.active {
+        left: 0;
+      }
+      .mobile-menu-btn {
+        display: flex;
+      }
+      .message {
+        max-width: 85%;
+      }
+      #input-area {
+        padding: 12px 16px;
+      }
+      .input-btn, #send, #stop-btn {
+        width: 42px;
+        height: 42px;
+        font-size: 16px;
+      }
+      #input {
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+      
+      #welcome-box, #login-box {
+        padding: 30px 20px;
+      }
+      
+      #welcome-box h2, #login-box h2 {
+        font-size: 28px;
+      }
+    }
+    /* Loading Animation */
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    /* Online Status */
+    .online-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--gray);
+    }
+    .online-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 6px rgba(76, 175, 80, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+      }
+    }
+    
+    /* Developer Badge */
+    .developer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    /* Settings Panel */
+    #settings-panel {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 320px;
+      height: 100%;
+      background: var(--sidebar-bg);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      z-index: 30;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+    }
+    
+    #settings-panel.active {
+      right: 0;
+    }
+    
+    #settings-panel h2 {
+      margin: 0 0 20px;
+      font-size: 20px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .settings-group {
+      margin-bottom: 20px;
+    }
+    
+    .settings-group h3 {
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: var(--light);
+    }
+    
+    .settings-group .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .settings-group .slider-container label {
+      flex: 1;
+      font-size: 14px;
+      color: var(--gray);
+    }
+    
+    .settings-group .slider {
+      width: 120px;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.2);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    
+    .settings-group .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+    }
+    
+    .settings-group .slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+    }
+    
+    .settings-group .value-display {
+      min-width: 40px;
+      text-align: right;
+      font-size: 14px;
+      color: var(--light);
+    }
+    
+    .settings-group .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .settings-group .button-group button {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--light);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 14px;
+    }
+    
+    .settings-group .button-group button:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Edit Message */
+    .edit-message {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+      display: none;
+    }
+    
+    .edit-message.active {
+      display: block;
+    }
+    
+    .edit-message textarea {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      border: none;
+      border-radius: 6px;
+      color: var(--light);
+      padding: 10px;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 80px;
+      margin-bottom: 10px;
+    }
+    
+    .edit-message .edit-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    
+    .edit-message .edit-actions button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .edit-message .edit-actions .save-btn {
+      background: var(--success);
+      color: white;
+    }
+    
+    .edit-message .edit-actions .cancel-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--light);
+    }
+    
+    .edit-message .edit-actions button:hover {
+      transform: translateY(-2px);
+    }
+    
+    /* Message Menu */
+    .message-menu {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 8px;
+      padding: 5px;
+      display: none;
+      z-index: 5;
+    }
+    
+    .message-menu.active {
+      display: block;
+    }
+    
+    .message-menu button {
+      background: none;
+      border: none;
+      color: var(--light);
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .message-menu button:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .message .menu-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 14px;
+    }
+    
+    .message .menu-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--light);
+    }
+    
+    /* Floating Action Button */
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+      transition: var(--transition);
+    }
+    
+    .fab:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    }
+    
+    /* Chat Speed Control */
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+    }
+    
+    .speed-control label {
+      font-size: 14px;
+      color: var(--gray);
+    }
+    
+    .speed-control select {
+      background: rgba(0, 0, 0, 0.2);
+      border: none;
+      border-radius: 6px;
+      color: var(--light);
+      padding: 6px 10px;
+      font-size: 14px;
+      outline: none;
+    }
+    
+    /* Error Fixing Animation */
+    .error-fixing {
+      display: inline-block;
+      position: relative;
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+    }
+    
+    .error-fixing::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--warning);
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    .error-fixing::after {
+      content: '🔧';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 12px;
+    }
+    
+    /* API Status Indicator */
+    .api-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--gray);
+      margin-left: 15px;
+    }
+    
+    .api-status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+    
+    .api-status.error .api-status-indicator {
+      background: var(--danger);
+      animation: pulse 2s infinite;
+    }
+    
+    /* Typing Speed Toggle */
+    .typing-speed-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .typing-speed-toggle label {
+      font-size: 14px;
+      color: var(--gray);
+    }
+    
+    .typing-speed-toggle .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 13px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .typing-speed-toggle .toggle-switch::before {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+    
+    .typing-speed-toggle .toggle-switch.active::before {
+      transform: translateX(24px);
+    }
+    
+    .typing-speed-description {
+      font-size: 12px;
+      color: var(--gray);
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  
+  <!-- Login Modal -->
+  <div id="login-modal">
+    <div id="login-box">
+      <h2>Login ke Dzx Ai</h2>
+      <p>Masukkan username Anda untuk memulai chat dengan asisten AI</p>
+      
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Masukkan username Anda" onkeydown="if(event.key==='Enter') login()">
+      </div>
+      
+      <div class="form-group">
+        <label for="message-type">Pesan yang dikirim ke Telegram:</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" id="username-only" name="message-type" value="username" checked>
+            <label for="username-only">Username saja</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="welcome-message" name="message-type" value="welcome">
+            <label for="welcome-message">Pesan selamat datang</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="custom-message" name="message-type" value="custom">
+            <label for="custom-message">Pesan kustom</label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group" id="custom-message-group" style="display: none;">
+        <label for="custom-message-text">Pesan Kustom</label>
+        <textarea id="custom-message-text" placeholder="Tulis pesan kustom Anda di sini..."></textarea>
+      </div>
+      
+      <div class="login-options">
+        <input type="checkbox" id="remember-me">
+        <label for="remember-me">Ingat saya</label>
+      </div>
+      
+      <button class="login-btn" onclick="login()">Masuk</button>
+      
+      <div class="telegram-option">
+        <h3><i class="fab fa-telegram"></i> Login dengan Telegram</h3>
+        <p>Hubungkan akun Telegram Anda untuk notifikasi real-time</p>
+        <button class="telegram-btn" onclick="loginWithTelegram()">
+          <i class="fab fa-telegram"></i> Hubungkan ke Telegram
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <h2><i class="fas fa-history"></i> History Chat</h2>
+    <div id="history"></div>
+    <div class="history-actions">
+      <button onclick="exportChat()"><i class="fas fa-download"></i> Export Chat</button>
+      <button onclick="clearHistory()"><i class="fas fa-trash-alt"></i> Clear History</button>
+      <button onclick="toggleTheme()"><i class="fas fa-moon"></i> Dark Mode</button>
+    </div>
+  </div>
+  <!-- Main -->
+  <div id="main">
+    <!-- Header -->
+    <div id="header">
+      <div class="left">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+        <h1>Dzx Ai</h1>
+        <div class="online-status">
+          <div class="online-indicator"></div>
+          <span>Online</span>
+        </div>
+        <div class="api-status" id="api-status">
+          <div class="api-status-indicator"></div>
+          <span>Api</span>
+        </div>
+      </div>
+      <div class="right">
+        <div class="user-profile" id="user-profile" style="display: none;">
+          <div class="user-avatar" id="user-avatar">U</div>
+          <div class="user-name" id="user-name">User</div>
+        </div>
+        <button onclick="toggleTheme()" class="theme-toggle"></button>
+        <button onclick="toggleSidebar()"><i class="fas fa-history"></i></button>
+        <button onclick="toggleSettings()"><i class="fas fa-cog"></i></button>
+        <button onclick="newChat()" class="new-chat-btn"><i class="fas fa-plus"></i> Chat Baru</button>
+      </div>
+    </div>
+    <!-- Chat -->
+    <div id="chat"></div>
+    <!-- Input -->
+    <div id="input-area">
+      <label for="file" class="input-btn"><i class="fas fa-paperclip"></i></label>
+      <input type="file" id="file" multiple />
+      <button class="input-btn" id="mic-btn" onclick="startVoice()"><i class="fas fa-microphone"></i></button>
+      <input id="input" type="text" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendMessage()" />
+      <button id="send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+      <button id="stop-btn" onclick="stopResponse()"><i class="fas fa-stop"></i></button>
+    </div>
+    <!-- Footer -->
+    <div id="footer">
+      <i class="fas fa-code"></i> Powered by ZhiPu-4.5 | Developed by <span class="developer-badge">DayzxTech</span>
+    </div>
+  </div>
+  
+  <!-- Settings Panel -->
+  <div id="settings-panel">
+    <h2><i class="fas fa-cog"></i> Pengaturan</h2>
+    
+    <div class="settings-group">
+      <h3>Tampilan</h3>
+      <div class="slider-container">
+        <label>Ukuran Font</label>
+        <input type="range" class="slider" id="font-size-slider" min="12" max="24" value="16">
+        <span class="value-display" id="font-size-value">16px</span>
+      </div>
+      <div class="slider-container">
+        <label>Kecepatan Animasi</label>
+        <input type="range" class="slider" id="animation-speed-slider" min="1" max="50" value="5">
+        <span class="value-display" id="animation-speed-value">5ms</span>
+      </div>
+    </div>
+    
+    <div class="settings-group">
+      <h3>Kecepatan Mengetik AI</h3>
+      <div class="slider-container">
+        <label>Kecepatan Mengetik</label>
+        <input type="range" class="slider" id="typing-speed-slider" min="1" max="10" value="8">
+        <span class="value-display" id="typing-speed-value">Cepat</span>
+      </div>
+      <div class="typing-speed-toggle">
+        <label>Animasi Mengetik</label>
+        <div class="toggle-switch active" id="typing-animation-toggle" onclick="toggleTypingAnimation()"></div>
+      </div>
+      <div class="typing-speed-description">
+        Nonaktifkan untuk menampilkan jawaban secara instan
+      </div>
+    </div>
+    
+    <div class="settings-group">
+      <h3>API Settings</h3>
+      <div class="slider-container">
+        <label>API Key</label>
+        <input type="password" id="api-key-input" style="flex: 1; background: rgba(0,0,0,0.2); border: none; border-radius: 6px; color: var(--light); padding: 8px;" value="b1b6637eee0246518b0e3180d0937915.Y5WAeweZRmTPZ1zJ">
+      </div>
+      <div class="button-group">
+        <button onclick="saveApiKey()">Simpan API Key</button>
+        <button onclick="testApiConnection()">Test Koneksi</button>
+      </div>
+    </div>
+    
+    <div class="settings-group">
+      <h3>Akun</h3>
+      <div class="button-group">
+        <button onclick="logout()">Keluar</button>
+        <button onclick="showAccountInfo()">Info Akun</button>
+      </div>
+    </div>
+    
+    <div class="settings-group">
+      <h3>Preferensi</h3>
+      <div class="button-group">
+        <button onclick="resetSettings()">Reset Pengaturan</button>
+        <button onclick="clearErrors()">Clear Error Log</button>
+      </div>
+    </div>
+    
+    <div class="settings-group">
+      <h3>Tentang</h3>
+      <p style="font-size: 14px; color: var(--gray); line-height: 1.5;">
+        GLM Chat v1.0<br>
+        Dikembangkan oleh DayzxTech<br>
+        Menggunakan GLM-4.5 API
+      </p>
+    </div>
+  </div>
+  
+  <!-- Welcome Modal -->
+  <div id="welcome-modal">
+    <div id="welcome-box">
+      <h2>Selamat Datang di Dayzx Open Ai</h2>
+      <p>Asisten AI cerdas berbasis Zhipu-4.5 yang siap membantu menjawab pertanyaan Anda dengan cepat.</p>
+      
+      <div class="developer-info">
+        <h3><i class="fas fa-user-cog"></i> Tentang Developer</h3>
+        <p><strong>Dzx Zhipuyan</strong> adalah tim pengembang inovatif yang berfokus pada solusi teknologi terdepan.</p>
+        
+        <h4>Kelebihan DayzxTech:</h4>
+        <ul>
+          <li>Desain UI/UX modern dan intuitif</li>
+          <li>Integrasi AI canggih dengan performa optimal</li>
+          <li>Kode berkualitas tinggi dan terstruktur</li>
+          <li>Support responsif untuk semua perangkat</li>
+          <li>Inovasi terkini dalam setiap pengembangan</li>
+          <li>Sistem auto-fix untuk mengatasi error secara otomatis</li>
+        </ul>
+      </div>
+      
+      <button onclick="closeWelcome()">Mulai Chat</button>
+    </div>
+  </div>
+  <!-- Notification -->
+  <div id="notification" class="notification">
+    <i class="fas fa-info-circle"></i>
+    <span id="notification-text"></span>
+  </div>
+  
+  <!-- Floating Action Button -->
+  <button class="fab" onclick="scrollToBottom()">
+    <i class="fas fa-arrow-down"></i>
+  </button>
+  <script>
+    // Configuration
+    const API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"; // GLM API endpoint
+    const API_KEY = "b1b6637eee0246518b0e3180d0937915.Y5WAeweZRmTPZ1zJ"; // GLM API key
+    const TELEGRAM_BOT_TOKEN = "8399129527:AAGp0nSBf0WN_-qYt_1NZJC3PJCU6sM47lo"; // Ganti dengan token bot Telegram Anda
+    const TELEGRAM_CHAT_ID = "7666363970"; // Ganti dengan chat ID Anda
+    
+    // DOM Elements
+    const chatBox = document.getElementById("chat");
+    const inputElement = document.getElementById("input");
+    const sidebar = document.getElementById("sidebar");
+    const settingsPanel = document.getElementById("settings-panel");
+    const historyContainer = document.getElementById("history");
+    const notification = document.getElementById("notification");
+    const notificationText = document.getElementById("notification-text");
+    const sendButton = document.getElementById("send");
+    const stopButton = document.getElementById("stop-btn");
+    const fontSizeSlider = document.getElementById("font-size-slider");
+    const fontSizeValue = document.getElementById("font-size-value");
+    const animationSpeedSlider = document.getElementById("animation-speed-slider");
+    const animationSpeedValue = document.getElementById("animation-speed-value");
+    const typingSpeedSlider = document.getElementById("typing-speed-slider");
+    const typingSpeedValue = document.getElementById("typing-speed-value");
+    const apiKeyInput = document.getElementById("api-key-input");
+    const apiStatus = document.getElementById("api-status");
+    const loginModal = document.getElementById("login-modal");
+    const usernameInput = document.getElementById("username");
+    const rememberMeCheckbox = document.getElementById("remember-me");
+    const userProfile = document.getElementById("user-profile");
+    const userAvatar = document.getElementById("user-avatar");
+    const userName = document.getElementById("user-name");
+    const customMessageGroup = document.getElementById("custom-message-group");
+    const customMessageText = document.getElementById("custom-message-text");
+    
+    // State
+    let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+    let currentChatId = Date.now().toString();
+    let recognition, recognizing = false;
+    let isTyping = false;
+    let typingTimeout;
+    let currentTypingMessage = null;
+    let errorCount = 0;
+    let maxRetries = 3;
+    let isApiConnected = false;
+    let isLoggedIn = false;
+    let currentUser = null;
+    let typingAnimationEnabled = true;
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Setup radio button event listeners
+      document.querySelectorAll('input[name="message-type"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+          if (this.value === 'custom') {
+            customMessageGroup.style.display = 'block';
+          } else {
+            customMessageGroup.style.display = 'none';
+          }
+        });
+      });
+      
+      // Check if user is already logged in
+      checkLoginStatus();
+      
+      loadChatHistory();
+      setupTheme();
+      setupFileUpload();
+      setupSettings();
+      
+      // Test API connection on load
+      testApiConnection();
+      
+      // Setup event listeners for outside clicks
+      document.addEventListener('click', (e) => {
+        // Close message menus when clicking outside
+        if (!e.target.closest('.message-menu') && !e.target.closest('.menu-btn')) {
+          document.querySelectorAll('.message-menu').forEach(menu => {
+            menu.classList.remove('active');
+          });
+        }
+      });
+      
+      // Setup error handling
+      window.addEventListener('error', (e) => {
+        logError(e.message, e.filename, e.lineno);
+        autoFixErrors();
+      });
+      
+      // Setup unhandled promise rejection handling
+      window.addEventListener('unhandledrejection', (e) => {
+        logError('Unhandled Promise Rejection: ' + e.reason, 'Promise', 0);
+        autoFixErrors();
+      });
+    });
+    
+    // Login System
+    function checkLoginStatus() {
+      const savedUser = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        isLoggedIn = true;
+        showUserProfile();
+        
+        // Check if we should show welcome modal
+        if (!localStorage.getItem('welcomeShown')) {
+          document.getElementById('welcome-modal').style.display = 'flex';
+        } else {
+          // Add suggested responses if returning user
+          addSuggestedResponses();
+          addDeveloperContact();
+        }
+      } else {
+        // Show login modal
+        loginModal.style.display = 'flex';
+      }
+    }
+    
+    function login() {
+      const username = usernameInput.value.trim();
+      if (!username) {
+        showNotification("Username tidak boleh kosong", "error");
+        return;
+      }
+      
+      // Get selected message type
+      const messageType = document.querySelector('input[name="message-type"]:checked').value;
+      let telegramMessage = "";
+      
+      // Prepare message based on selection
+      if (messageType === "username") {
+        telegramMessage = `User login: ${username}`;
+      } else if (messageType === "welcome") {
+        telegramMessage = `Selamat datang ${username} di GLM Chat!`;
+      } else if (messageType === "custom") {
+        const customText = customMessageText.value.trim();
+        if (customText) {
+          telegramMessage = customText.replace(/\{username\}/g, username);
+        } else {
+          telegramMessage = `User login: ${username}`;
+        }
+      }
+      
+      // Create user object
+      const user = {
+        id: Date.now().toString(),
+        username: username,
+        loginTime: new Date().toISOString(),
+        rememberMe: rememberMeCheckbox.checked
+      };
+      
+      // Save user to localStorage
+      if (rememberMeCheckbox.checked) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+      } else {
+        sessionStorage.setItem('currentUser', JSON.stringify(user));
+      }
+      
+      currentUser = user;
+      isLoggedIn = true;
+      
+      // Send message to Telegram bot (simulated)
+      sendToTelegram(telegramMessage);
+      
+      // Hide login modal
+      loginModal.style.display = 'none';
+      
+      // Show user profile
+      showUserProfile();
+      
+      // Show welcome message
+      showNotification(`Selamat datang, ${username}!`, "success");
+      
+      // Add suggested responses
+      addSuggestedResponses();
+      
+      // Add developer contact
+      addDeveloperContact();
+      
+      // Show welcome modal if first time
+      if (!localStorage.getItem('welcomeShown')) {
+        document.getElementById('welcome-modal').style.display = 'flex';
+      }
+    }
+    
+    function loginWithTelegram() {
+      // Simulate Telegram login
+      showNotification("Menghubungkan ke Telegram...", "info");
+      
+      // In a real implementation, this would open Telegram auth flow
+      setTimeout(() => {
+        // Generate a random username for demo purposes
+        const telegramUsername = "TelegramUser_" + Math.floor(Math.random() * 1000);
+        usernameInput.value = telegramUsername;
+        rememberMeCheckbox.checked = true;
+        showNotification("Berhasil terhubung ke Telegram!", "success");
+      }, 1500);
+    }
+    
+    function logout() {
+      if (confirm("Apakah Anda yakin ingin keluar?")) {
+        // Clear user data
+        localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('currentUser');
+        
+        // Reset state
+        currentUser = null;
+        isLoggedIn = false;
+        
+        // Hide user profile
+        userProfile.style.display = 'none';
+        
+        // Show login modal
+        loginModal.style.display = 'flex';
+        
+        // Clear chat
+        chatBox.innerHTML = '';
+        
+        showNotification("Anda telah keluar", "info");
+      }
+    }
+    
+    function showUserProfile() {
+      if (!currentUser) return;
+      
+      // Show profile in header
+      userProfile.style.display = 'flex';
+      
+      // Set user avatar (first letter of username)
+      const initial = currentUser.username.charAt(0).toUpperCase();
+      userAvatar.textContent = initial;
+      
+      // Set username (truncate if too long)
+      const displayName = currentUser.username.length > 10 
+        ? currentUser.username.substring(0, 10) + '...' 
+        : currentUser.username;
+      userName.textContent = displayName;
+    }
+    
+    function showAccountInfo() {
+      if (!currentUser) return;
+      
+      const loginDate = new Date(currentUser.loginTime).toLocaleString('id-ID');
+      
+      const accountInfo = `
+        <div style="background: rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; margin: 20px 0;">
+          <h3 style="color: var(--accent); margin-bottom: 15px;">Informasi Akun</h3>
+          <p style="margin-bottom: 10px;"><strong>Username:</strong> ${currentUser.username}</p>
+          <p style="margin-bottom: 10px;"><strong>ID:</strong> ${currentUser.id}</p>
+          <p style="margin-bottom: 10px;"><strong>Login Sejak:</strong> ${loginDate}</p>
+          <p><strong>Status:</strong> <span style="color: var(--success);">Aktif</span></p>
+        </div>
+      `;
+      
+      // Create modal to show account info
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 150;
+        backdrop-filter: blur(5px);
+      `;
+      
+      const modalContent = document.createElement('div');
+      modalContent.style.cssText = `
+        background: var(--dark);
+        border-radius: 20px;
+        padding: 30px;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      `;
+      
+      modalContent.innerHTML = accountInfo + `
+        <button onclick="this.parentElement.parentElement.remove()" style="
+          padding: 10px 20px;
+          border: none;
+          border-radius: 10px;
+          background: var(--primary);
+          color: white;
+          font-size: 14px;
+          cursor: pointer;
+          margin-top: 15px;
+        ">Tutup</button>
+      `;
+      
+      modal.appendChild(modalContent);
+      document.body.appendChild(modal);
+    }
+    
+    function sendToTelegram(message) {
+      // Simulate sending message to Telegram bot
+      console.log("Sending to Telegram:", message);
+      
+      // In a real implementation, you would make an API call to Telegram:
+      /*
+      fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: message
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Telegram response:", data);
+      })
+      .catch(error => {
+        console.error("Telegram error:", error);
+      });
+      */
+    }
+    
+    function addDeveloperContact() {
+      // Check if developer contact already exists
+      if (document.querySelector('.developer-contact')) {
+        return;
+      }
+      
+      const developerContact = document.createElement('div');
+      developerContact.className = 'developer-contact';
+      developerContact.innerHTML = `
+        <h3><i class="fas fa-user-cog"></i> Hubungi Developer</h3>
+        <p>Butuh bantuan atau ingin melaporkan bug? Hubungi developer kami:</p>
+        <a href="#" class="telegram-contact" onclick="openTelegram('@DayzxTech'); return false;">
+          <i class="fab fa-telegram"></i> @DayzxTech
+        </a>
+      `;
+      
+      chatBox.appendChild(developerContact);
+    }
+    
+    function openTelegram(username) {
+      // Try to open Telegram app
+      const telegramUrl = `https://t.me/${username.replace('@', '')}`;
+      
+      // Try to open in Telegram app first
+      window.open(`tg://resolve?domain=${username.replace('@', '')}`, '_blank');
+      
+      // Fallback to web version
+      setTimeout(() => {
+        window.open(telegramUrl, '_blank');
+      }, 500);
+      
+      showNotification("Membuka Telegram...", "info");
+    }
+    
+    // Error Handling and Auto-fix
+    function logError(message, source, lineno) {
+      errorCount++;
+      
+      // Save error to localStorage
+      const errors = JSON.parse(localStorage.getItem('errorLog')) || [];
+      errors.push({
+        message,
+        source,
+        lineno,
+        timestamp: new Date().toISOString(),
+        user: currentUser ? currentUser.username : 'Guest'
+      });
+      
+      // Keep only last 20 errors
+      if (errors.length > 20) {
+        errors.shift();
+      }
+      
+      localStorage.setItem('errorLog', JSON.stringify(errors));
+      
+      console.error(`Error #${errorCount}: ${message} at ${source}:${lineno}`);
+    }
+    
+    function autoFixErrors() {
+      if (errorCount > 5) {
+        showNotification('Mendeteksi beberapa error, mencoba memperbaiki...', 'info');
+        
+        // Create fixing indicator
+        const fixingDiv = document.createElement('div');
+        fixingDiv.className = 'error-fixing';
+        notificationText.prepend(fixingDiv);
+        notification.className = 'notification info show';
+        notificationText.textContent = 'Memperbaiki error...';
+        
+        // Attempt to fix common issues
+        setTimeout(() => {
+          // Reset API connection
+          isApiConnected = false;
+          testApiConnection();
+          
+          // Clear any stuck typing indicators
+          removeTyping();
+          hideStopButton();
+          
+          // Reset typing state
+          isTyping = false;
+          currentTypingMessage = null;
+          
+          // Show notification
+          notificationText.removeChild(fixingDiv);
+          showNotification('Error telah diperbaiki', 'success');
+          
+          // Reset error count
+          errorCount = 0;
+        }, 2000);
+      }
+    }
+    
+    function clearErrors() {
+      localStorage.removeItem('errorLog');
+      errorCount = 0;
+      showNotification('Error log telah dibersihkan', 'success');
+    }
+    
+    // API Management
+    function saveApiKey() {
+      const newApiKey = apiKeyInput.value.trim();
+      if (newApiKey) {
+        // In a real app, you would securely store this
+        // For demo purposes, we'll just update the variable
+        localStorage.setItem('apiKey', newApiKey);
+        showNotification('API Key telah disimpan', 'success');
+        testApiConnection();
+      } else {
+        showNotification('API Key tidak valid', 'error');
+      }
+    }
+    
+    async function testApiConnection() {
+      showNotification('Menguji koneksi API...', 'info');
+      
+      try {
+        // Simple test request
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${API_KEY}`
+          },
+          body: JSON.stringify({
+            model: "glm-4",
+            messages: [
+              { role: "user", content: "Test" }
+            ],
+            max_tokens: 5
+          })
+        });
+        
+        if (response.ok) {
+          isApiConnected = true;
+          apiStatus.classList.remove('error');
+          showNotification('Koneksi API berhasil', 'success');
+        } else {
+          throw new Error(`API responded with status: ${response.status}`);
+        }
+      } catch (error) {
+        isApiConnected = false;
+        apiStatus.classList.add('error');
+        showNotification('Koneksi API gagal: ' + error.message, 'error');
+        logError('API Connection Failed: ' + error.message, 'api.js', 0);
+      }
+    }
+    
+    // Theme Management
+    function setupTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      
+      // Update theme button text
+      updateThemeButton(savedTheme);
+    }
+    
+    function updateThemeButton(theme) {
+      const themeButtons = document.querySelectorAll('.history-actions button:nth-child(3)');
+      themeButtons.forEach(btn => {
+        if (theme === 'dark') {
+          btn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+        } else {
+          btn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+        }
+      });
+    }
+    
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeButton(newTheme);
+    }
+    
+    // Settings Management
+    function setupSettings() {
+      // Font size slider
+      const savedFontSize = localStorage.getItem('fontSize') || '16';
+      fontSizeSlider.value = savedFontSize;
+      fontSizeValue.textContent = savedFontSize + 'px';
+      document.documentElement.style.setProperty('--font-size', savedFontSize + 'px');
+      
+      fontSizeSlider.addEventListener('input', (e) => {
+        const fontSize = e.target.value;
+        fontSizeValue.textContent = fontSize + 'px';
+        document.documentElement.style.setProperty('--font-size', fontSize + 'px');
+        localStorage.setItem('fontSize', fontSize);
+      });
+      
+      // Animation speed slider
+      const savedAnimationSpeed = localStorage.getItem('animationSpeed') || '5';
+      animationSpeedSlider.value = savedAnimationSpeed;
+      animationSpeedValue.textContent = savedAnimationSpeed + 'ms';
+      document.documentElement.style.setProperty('--animation-speed', savedAnimationSpeed + 'ms');
+      
+      animationSpeedSlider.addEventListener('input', (e) => {
+        const animationSpeed = e.target.value;
+        animationSpeedValue.textContent = animationSpeed + 'ms';
+        document.documentElement.style.setProperty('--animation-speed', animationSpeed + 'ms');
+        localStorage.setItem('animationSpeed', animationSpeed);
+      });
+      
+      // Typing speed slider
+      const savedTypingSpeed = localStorage.getItem('typingSpeed') || '8';
+      typingSpeedSlider.value = savedTypingSpeed;
+      updateTypingSpeedLabel(savedTypingSpeed);
+      
+      typingSpeedSlider.addEventListener('input', (e) => {
+        const typingSpeed = e.target.value;
+        updateTypingSpeedLabel(typingSpeed);
+        localStorage.setItem('typingSpeed', typingSpeed);
+      });
+      
+      // Load saved API key if exists
+      const savedApiKey = localStorage.getItem('apiKey');
+      if (savedApiKey) {
+        apiKeyInput.value = savedApiKey;
+      }
+      
+      // Load typing animation setting
+      const savedTypingAnimation = localStorage.getItem('typingAnimationEnabled');
+      if (savedTypingAnimation !== null) {
+        typingAnimationEnabled = savedTypingAnimation === 'true';
+        document.getElementById('typing-animation-toggle').classList.toggle('active', typingAnimationEnabled);
+      }
+    }
+    
+    function updateTypingSpeedLabel(value) {
+      const labels = ['Sangat Lambat', 'Lambat', 'Sedang', 'Cukup Cepat', 'Cepat', 
+                     'Lebih Cepat', 'Sangat Cepat', 'Super Cepat', 'Instan', 'Langsung'];
+      typingSpeedValue.textContent = labels[value - 1] || 'Cepat';
+    }
+    
+    function toggleTypingAnimation() {
+      typingAnimationEnabled = !typingAnimationEnabled;
+      document.getElementById('typing-animation-toggle').classList.toggle('active', typingAnimationEnabled);
+      localStorage.setItem('typingAnimationEnabled', typingAnimationEnabled);
+    }
+    
+    function toggleSettings() {
+      settingsPanel.classList.toggle('active');
+    }
+    
+    function resetSettings() {
+      if (confirm('Apakah Anda yakin ingin mereset semua pengaturan?')) {
+        localStorage.removeItem('fontSize');
+        localStorage.removeItem('animationSpeed');
+        localStorage.removeItem('typingSpeed');
+        localStorage.removeItem('typingAnimationEnabled');
+        
+        // Reset UI
+        fontSizeSlider.value = 16;
+        fontSizeValue.textContent = '16px';
+        document.documentElement.style.setProperty('--font-size', '16px');
+        
+        animationSpeedSlider.value = 5;
+        animationSpeedValue.textContent = '5ms';
+        document.documentElement.style.setProperty('--animation-speed', '5ms');
+        
+        typingSpeedSlider.value = 8;
+        updateTypingSpeedLabel(8);
+        
+        typingAnimationEnabled = true;
+        document.getElementById('typing-animation-toggle').classList.add('active');
+        
+        showNotification('Pengaturan telah direset', 'success');
+      }
+    }
+    
+    // Notification System
+    function showNotification(message, type = 'info') {
+      notificationText.textContent = message;
+      notification.className = `notification ${type} show`;
+      
+      // Update icon based on type
+      const icon = notification.querySelector('i');
+      if (type === 'success') {
+        icon.className = 'fas fa-check-circle';
+      } else if (type === 'error') {
+        icon.className = 'fas fa-exclamation-circle';
+      } else {
+        icon.className = 'fas fa-info-circle';
+      }
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Welcome Modal
+    function closeWelcome() {
+      document.getElementById('welcome-modal').style.display = 'none';
+      localStorage.setItem('welcomeShown', 'true');
+      
+      // Add initial suggested responses
+      addSuggestedResponses();
+      
+      // Add developer contact
+      addDeveloperContact();
+      
+      // Show welcome message from bot
+      setTimeout(() => {
+        const welcomeMessage = `Halo ${currentUser.username}! Saya adalah asisten AI berbasis ZhipuQin -4.5 yang dikembangkan oleh tim DayzxTech. 
+Sistem ini dilengkapi dengan kemampuan auto-fix untuk mengatasi error secara otomatis.
+Ada yang bisa saya bantu hari ini?`;
+        typeWriter(welcomeMessage, "bot");
+      }, 500);
+    }
+    
+    // Sidebar Management
+    function toggleSidebar() {
+      sidebar.classList.toggle('active');
+    }
+    
+    // Chat Management
+    function newChat() {
+      // Save current chat if it has messages
+      const messages = document.querySelectorAll('.message');
+      if (messages.length > 0) {
+        saveCurrentChat();
+      }
+      
+      // Reset chat
+      chatBox.innerHTML = '';
+      currentChatId = Date.now().toString();
+      
+      // Add suggested responses
+      addSuggestedResponses();
+      
+      // Add developer contact
+      addDeveloperContact();
+      
+      showNotification('Chat baru telah dibuat', 'success');
+    }
+    
+    function saveCurrentChat() {
+      const messages = [];
+      document.querySelectorAll('.message').forEach(msg => {
+        messages.push({
+          sender: msg.classList.contains('user') ? 'user' : 'bot',
+          content: msg.querySelector('.content').textContent,
+          timestamp: new Date().toISOString()
+        });
+      });
+      
+      if (messages.length > 0) {
+        const chatData = {
+          id: currentChatId,
+          title: messages[0].content.substring(0, 30) + (messages[0].content.length > 30 ? '...' : ''),
+          messages: messages,
+          timestamp: new Date().toISOString(),
+          userId: currentUser ? currentUser.id : null
+        };
+        
+        // Check if chat already exists
+        const existingIndex = chatHistory.findIndex(chat => chat.id === currentChatId);
+        if (existingIndex !== -1) {
+          chatHistory[existingIndex] = chatData;
+        } else {
+          chatHistory.unshift(chatData);
+        }
+        
+        // Keep only last 20 chats
+        if (chatHistory.length > 20) {
+          chatHistory = chatHistory.slice(0, 20);
+        }
+        
+        localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+        loadChatHistory();
+      }
+    }
+    
+    function loadChatHistory() {
+      historyContainer.innerHTML = '';
+      
+      if (chatHistory.length === 0) {
+        historyContainer.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 20px;">Tidak ada riwayat chat</p>';
+        return;
+      }
+      
+      chatHistory.forEach(chat => {
+        // Only show chats from current user if logged in
+        if (currentUser && chat.userId && chat.userId !== currentUser.id) {
+          return;
+        }
+        
+        const chatItem = document.createElement('div');
+        chatItem.className = 'history-item';
+        chatItem.innerHTML = `
+          <i class="fas fa-comment"></i>
+          <div class="title">${chat.title}</div>
+          <div class="date">${formatDate(chat.timestamp)}</div>
+        `;
+        chatItem.onclick = () => loadChat(chat.id);
+        historyContainer.appendChild(chatItem);
+      });
+    }
+    
+    function loadChat(chatId) {
+      const chat = chatHistory.find(c => c.id === chatId);
+      if (!chat) return;
+      
+      chatBox.innerHTML = '';
+      currentChatId = chatId;
+      
+      chat.messages.forEach(msg => {
+        appendMessage(msg.content, msg.sender, false);
+      });
+      
+      // Add developer contact if it doesn't exist
+      if (!document.querySelector('.developer-contact')) {
+        addDeveloperContact();
+      }
+      
+      // Close sidebar on mobile
+      if (window.innerWidth <= 768) {
+        sidebar.classList.remove('active');
+      }
+    }
+    
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('id-ID', { 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric' 
+      });
+    }
+    
+    function clearHistory() {
+      if (confirm('Apakah Anda yakin ingin menghapus semua riwayat chat?')) {
+        chatHistory = [];
+        localStorage.removeItem('chatHistory');
+        loadChatHistory();
+        showNotification('Riwayat chat telah dihapus', 'success');
+      }
+    }
+    
+    function exportChat() {
+      const messages = [];
+      document.querySelectorAll('.message').forEach(msg => {
+        const sender = msg.classList.contains('user') ? 'User' : 'Dzx Asistant';
+        const content = msg.querySelector('.content').textContent;
+        messages.push(`${sender}: ${content}`);
+      });
+      
+      if (messages.length === 0) {
+        showNotification('Tidak ada chat untuk diekspor', 'error');
+        return;
+      }
+      
+      const chatText = messages.join('\n\n');
+      const blob = new Blob([chatText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `chat-export-${new Date().toISOString().slice(0, 10)}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showNotification('Chat berhasil diekspor', 'success');
+    }
+    
+    // Message Handling
+    async function sendMessage() {
+      if (!isLoggedIn) {
+        showNotification("Silakan login terlebih dahulu", "error");
+        loginModal.style.display = 'flex';
+        return;
+      }
+      
+      const input = inputElement.value.trim();
+      if (!input || isTyping) return;
+      
+      appendMessage(input, "user");
+      inputElement.value = "";
+      showTyping();
+      showStopButton();
+      
+      try {
+        const response = await callGLMAPI(input);
+        removeTyping();
+        hideStopButton();
+        
+        if (typingAnimationEnabled) {
+          typeWriter(response, "bot");
+        } else {
+          appendMessage(response, "bot");
+        }
+      } catch (error) {
+        removeTyping();
+        hideStopButton();
+        appendMessage("⚠️ Maaf, terjadi kesalahan. Sistem akan mencoba memperbaiki masalah ini.", "bot");
+        console.error('API Error:', error);
+        logError('API Error: ' + error.message, 'api.js', 0);
+        
+        // Try to auto-fix the issue
+        autoFixErrors();
+      }
+    }
+    
+    function showStopButton() {
+      sendButton.style.display = 'none';
+      stopButton.style.display = 'flex';
+    }
+    
+    function hideStopButton() {
+      sendButton.style.display = 'flex';
+      stopButton.style.display = 'none';
+    }
+    
+    function stopResponse() {
+      if (isTyping && currentTypingMessage) {
+        // Clear the timeout to stop typing animation
+        clearTimeout(typingTimeout);
+        
+        // Remove typing indicator
+        removeTyping();
+        
+        // Hide stop button
+        hideStopButton();
+        
+        showNotification('Respons dihentikan', 'info');
+      }
+    }
+    
+    async function callGLMAPI(message) {
+      if (!isApiConnected) {
+        // Try to reconnect
+        await testApiConnection();
+        
+        if (!isApiConnected) {
+          throw new Error('API not connected');
+        }
+      }
+      
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${API_KEY}`
+          },
+          body: JSON.stringify({
+            model: "glm-4",
+            messages: [
+              { role: "user", content: message }
+            ],
+            temperature: 0.7,
+            max_tokens: 2000
+          })
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || `API responded with status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.choices && data.choices.length > 0 && data.choices[0].message) {
+          return data.choices[0].message.content;
+        } else {
+          throw new Error('Invalid API response format');
+        }
+      } catch (error) {
+        console.error('API call failed:', error);
+        throw error;
+      }
+    }
+    
+    function appendMessage(text, sender, animate = true) {
+      const msg = document.createElement("div");
+      msg.classList.add("message", sender);
+      
+      // Add message ID for reference
+      msg.dataset.id = Date.now().toString();
+      
+      const header = document.createElement("div");
+      header.className = "header";
+      header.innerHTML = sender === "user" 
+        ? '<i class="fas fa-user"></i> ' + (currentUser ? currentUser.username : 'Anda') 
+        : '<i class="fas fa-robot"></i> Dzx Assistant';
+      
+      const content = document.createElement("div");
+      content.className = "content";
+      content.textContent = text;
+      
+      // Add menu button for user messages
+      if (sender === "user") {
+        const menuBtn = document.createElement("button");
+        menuBtn.className = "menu-btn";
+        menuBtn.innerHTML = '<i class="fas fa-ellipsis-v"></i>';
+        menuBtn.onclick = (e) => {
+          e.stopPropagation();
+          toggleMessageMenu(msg);
+        };
+        msg.appendChild(menuBtn);
+        
+        // Create message menu
+        const messageMenu = document.createElement("div");
+        messageMenu.className = "message-menu";
+        messageMenu.innerHTML = `
+          <button onclick="editMessage('${msg.dataset.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+          <button onclick="deleteMessage('${msg.dataset.id}')" title="Hapus"><i class="fas fa-trash"></i></button>
+        `;
+        msg.appendChild(messageMenu);
+      }
+      
+      msg.appendChild(header);
+      msg.appendChild(content);
+      
+      if (sender === "bot") {
+        addActions(msg, text);
+      }
+      
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      
+      if (animate) {
+        msg.style.animation = "fadeIn 0.3s ease-out";
+      }
+    }
+    
+    function typeWriter(text, sender) {
+      const msg = document.createElement("div");
+      msg.classList.add("message", sender);
+      
+      // Add message ID for reference
+      msg.dataset.id = Date.now().toString();
+      
+      const header = document.createElement("div");
+      header.className = "header";
+      header.innerHTML = sender === "user" 
+        ? '<i class="fas fa-user"></i> ' + (currentUser ? currentUser.username : 'Anda') 
+        : '<i class="fas fa-robot"></i> Dzx Assistant';
+      
+      const content = document.createElement("div");
+      content.className = "content";
+      
+      msg.appendChild(header);
+      msg.appendChild(content);
+      chatBox.appendChild(msg);
+      
+      // Store reference to current typing message
+      currentTypingMessage = msg;
+      
+      let i = 0;
+      
+      // Calculate typing speed based on slider value
+      const typingSpeedValue = parseInt(typingSpeedSlider.value);
+      let baseSpeed = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--animation-speed'));
+      
+      // Adjust speed based on slider (1 = slowest, 10 = fastest)
+      const speedMultiplier = 11 - typingSpeedValue; // Invert so higher value = faster
+      const actualSpeed = baseSpeed * speedMultiplier;
+      
+      function typing() {
+        if (i < text.length) {
+          content.textContent += text.charAt(i);
+          i++;
+          chatBox.scrollTop = chatBox.scrollHeight;
+          typingTimeout = setTimeout(typing, actualSpeed);
+        } else {
+          // Reset current typing message
+          currentTypingMessage = null;
+          
+          if (sender === "bot") {
+            addActions(msg, text);
+          }
+        }
+      }
+      typing();
+    }
+    
+    function addActions(msg, text) {
+      const actions = document.createElement("div");
+      actions.className = "actions";
+      
+      // Copy button
+      const copyBtn = document.createElement("button");
+      copyBtn.innerHTML = '<i class="fas fa-copy"></i> Salin';
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(text);
+        copyBtn.innerHTML = '<i class="fas fa-check"></i> Disalin';
+        setTimeout(() => copyBtn.innerHTML = '<i class="fas fa-copy"></i> Salin', 1200);
+      };
+      
+      // Listen button
+      const speakBtn = document.createElement("button");
+      speakBtn.innerHTML = '<i class="fas fa-volume-up"></i> Dengarkan';
+      speakBtn.onclick = () => speak(text);
+      
+      // Share button
+      const shareBtn = document.createElement("button");
+      shareBtn.innerHTML = '<i class="fas fa-share-alt"></i> Bagikan';
+      shareBtn.onclick = () => shareMessage(text);
+      
+      actions.appendChild(copyBtn);
+      actions.appendChild(speakBtn);
+      actions.appendChild(shareBtn);
+      msg.appendChild(actions);
+    }
+    
+    function showTyping() {
+      isTyping = true;
+      const div = document.createElement("div");
+      div.classList.add("message", "bot", "typing");
+      div.innerHTML = `
+        <div class="header"><i class="fas fa-robot"></i> GLM Assistant</div>
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+      `;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    
+    function removeTyping() {
+      isTyping = false;
+      document.querySelector(".typing")?.remove();
+    }
+    
+    // Message Menu Functions
+    function toggleMessageMenu(messageElement) {
+      // Close all other message menus
+      document.querySelectorAll('.message-menu').forEach(menu => {
+        if (menu.parentElement !== messageElement) {
+          menu.classList.remove('active');
+        }
+      });
+      
+      // Toggle current message menu
+      const menu = messageElement.querySelector('.message-menu');
+      menu.classList.toggle('active');
+    }
+    
+    function editMessage(messageId) {
+      const messageElement = document.querySelector(`.message[data-id="${messageId}"]`);
+      if (!messageElement) return;
+      
+      const contentElement = messageElement.querySelector('.content');
+      const currentText = contentElement.textContent;
+      
+      // Check if edit form already exists
+      let editForm = messageElement.querySelector('.edit-message');
+      if (!editForm) {
+        editForm = document.createElement('div');
+        editForm.className = 'edit-message';
+        
+        const textarea = document.createElement('textarea');
+        textarea.value = currentText;
+        
+        const actions = document.createElement('div');
+        actions.className = 'edit-actions';
+        
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'save-btn';
+        saveBtn.textContent = 'Simpan';
+        saveBtn.onclick = () => {
+          contentElement.textContent = textarea.value;
+          editForm.classList.remove('active');
+          showNotification('Pesan telah diperbarui', 'success');
+        };
+        
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'cancel-btn';
+        cancelBtn.textContent = 'Batal';
+        cancelBtn.onclick = () => {
+          editForm.classList.remove('active');
+        };
+        
+        actions.appendChild(saveBtn);
+        actions.appendChild(cancelBtn);
+        
+        editForm.appendChild(textarea);
+        editForm.appendChild(actions);
+        
+        messageElement.appendChild(editForm);
+      }
+      
+      editForm.classList.add('active');
+      editForm.querySelector('textarea').focus();
+      
+      // Close message menu
+      messageElement.querySelector('.message-menu').classList.remove('active');
+    }
+    
+    function deleteMessage(messageId) {
+      const messageElement = document.querySelector(`.message[data-id="${messageId}"]`);
+      if (!messageElement) return;
+      
+      if (confirm('Apakah Anda yakin ingin menghapus pesan ini?')) {
+        messageElement.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => {
+          messageElement.remove();
+          showNotification('Pesan telah dihapus', 'success');
+        }, 300);
+      }
+      
+      // Close message menu
+      messageElement.querySelector('.message-menu').classList.remove('active');
+    }
+    
+    // Suggested Responses
+    function addSuggestedResponses() {
+      // Check if suggested responses already exist
+      if (document.querySelector('.suggested-responses')) {
+        return;
+      }
+      
+      const suggestions = [
+        "Apa kabar?",
+        "Bisakah Anda menjelaskan tentang AI?",
+        "Tolong buatkan puisi singkat",
+        "Apa berita terbaru hari ini?"
+      ];
+      
+      const container = document.createElement("div");
+      container.className = "suggested-responses";
+      
+      suggestions.forEach(text => {
+        const btn = document.createElement("div");
+        btn.className = "suggested-response";
+        btn.textContent = text;
+        btn.onclick = () => {
+          inputElement.value = text;
+          sendMessage();
+        };
+        container.appendChild(btn);
+      });
+      
+      chatBox.appendChild(container);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    
+    // Voice to Text
+    function startVoice() {
+      if (!isLoggedIn) {
+        showNotification("Silakan login terlebih dahulu", "error");
+        loginModal.style.display = 'flex';
+        return;
+      }
+      
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        showNotification("Browser Anda tidak mendukung pengenalan suara", "error");
+        return;
+      }
+      
+      if (!recognition) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = "id-ID";
+        recognition.interimResults = false;
+        recognition.continuous = false;
+        
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          inputElement.value = transcript;
+          showNotification("Pesan suara telah dikenali", "success");
+        };
+        
+        recognition.onerror = (event) => {
+          showNotification("Kesalahan pengenalan suara: " + event.error, "error");
+          recognizing = false;
+          updateMicButton();
+        };
+        
+        recognition.onend = () => {
+          recognizing = false;
+          updateMicButton();
+        };
+      }
+      
+      if (!recognizing) {
+        recognition.start();
+        recognizing = true;
+        updateMicButton();
+        showNotification("Mendengarkan...", "info");
+      } else {
+        recognition.stop();
+        recognizing = false;
+        updateMicButton();
+      }
+    }
+    
+    function updateMicButton() {
+      const micBtn = document.getElementById('mic-btn');
+      if (recognizing) {
+        micBtn.innerHTML = '<i class="fas fa-stop"></i>';
+        micBtn.style.color = 'var(--danger)';
+      } else {
+        micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+        micBtn.style.color = 'var(--accent)';
+      }
+    }
+    
+    // Text to Speech
+    function speak(text) {
+      if ("speechSynthesis" in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "id-ID";
+        utterance.rate = 1;
+        utterance.pitch = 1;
+        
+        utterance.onstart = () => {
+          showNotification("Mulai membaca pesan...", "info");
+        };
+        
+        utterance.onend = () => {
+          showNotification("Selesai membaca pesan", "success");
+        };
+        
+        utterance.onerror = () => {
+          showNotification("Kesalahan saat membaca pesan", "error");
+        };
+        
+        speechSynthesis.speak(utterance);
+      } else {
+        showNotification("Browser Anda tidak mendukung sintesis suara", "error");
+      }
+    }
+    
+    // Share Message
+    function shareMessage(text) {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Dibagikan dari GLM Chat',
+          text: text
+        })
+        .then(() => showNotification("Berhasil membagikan pesan", "success"))
+        .catch(() => showNotification("Gagal membagikan pesan", "error"));
+      } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(text);
+        showNotification("Pesan telah disalin ke clipboard", "success");
+      }
+    }
+    
+    // File Upload
+    function setupFileUpload() {
+      const fileInput = document.getElementById('file');
+      fileInput.addEventListener('change', handleFileSelect);
+    }
+    
+    function handleFileSelect(event) {
+      if (!isLoggedIn) {
+        showNotification("Silakan login terlebih dahulu", "error");
+        loginModal.style.display = 'flex';
+        return;
+      }
+      
+      const files = event.target.files;
+      if (files.length > 0) {
+        showNotification(`${files.length} file dipilih`, 'info');
+        
+        // Here you would typically process the files
+        // For now, we'll just show a notification
+        for (let i = 0; i < files.length; i++) {
+          console.log(`File ${i+1}:`, files[i].name, files[i].size, files[i].type);
+        }
+      }
+    }
+    
+    // Scroll to Bottom
+    function scrollToBottom() {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Ctrl/Cmd + K to focus input
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        inputElement.focus();
+      }
+      
+      // Ctrl/Cmd + N for new chat
+      if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        e.preventDefault();
+        newChat();
+      }
+      
+      // Ctrl/Cmd + H to toggle sidebar
+      if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
+        e.preventDefault();
+        toggleSidebar();
+      }
+      
+      // Ctrl/Cmd + S to toggle settings
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        toggleSettings();
+      }
+      
+      // Escape to close modals
+      if (e.key === 'Escape') {
+        settingsPanel.classList.remove('active');
+        document.querySelectorAll('.message-menu').forEach(menu => {
+          menu.classList.remove('active');
+        });
+        document.querySelectorAll('.edit-message').forEach(edit => {
+          edit.classList.remove('active');
+        });
+      }
+    });
+    
+    // Save chat when page is closed
+    window.addEventListener('beforeunload', () => {
+      saveCurrentChat();
+    });
+    
+    // Add fadeOut animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeOut {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 0; transform: translateY(-10px); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
